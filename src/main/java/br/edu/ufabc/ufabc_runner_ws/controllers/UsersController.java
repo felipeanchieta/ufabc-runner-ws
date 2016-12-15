@@ -20,15 +20,16 @@ public class UsersController {
      * Updates the score of a user previously in the database
      *
      * @param id    the Facebook ID of the user
-     * @param score the score that will *added* to the current
+     * @param score the score that will update the current
      * @return the new score (long)
      */
     @RequestMapping(method = RequestMethod.PUT, value = "/{facebookId}")
     public long updateScore(@PathVariable(value = "facebookId") String id, @RequestParam(value = "score") long score) {
-        long currentScore = getUserScore(id);
         User user = usersRepository.findById(id);
-        user.setScore(currentScore + score);
-        usersRepository.save(user);
+        if (score > user.getScore()) {
+            user.setScore(score);
+            usersRepository.save(user);
+        }
         return usersRepository.findById(id).getScore();
     }
 
@@ -53,6 +54,11 @@ public class UsersController {
         usersRepository.insert(new User(id));
     }
 
+    /**
+     * Deletes a user
+     *
+     * @param id the Facebook ID of the user
+     */
     @RequestMapping(method = RequestMethod.DELETE, value = "/")
     public void deleteUser(@RequestParam(value = "facebookId") String id) {
         usersRepository.delete(id);
