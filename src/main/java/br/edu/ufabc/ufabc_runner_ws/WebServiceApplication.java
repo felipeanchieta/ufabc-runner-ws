@@ -1,4 +1,4 @@
-package br.edu.ufabc.ufabcrunner_ws;
+package br.edu.ufabc.ufabc_runner_ws;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

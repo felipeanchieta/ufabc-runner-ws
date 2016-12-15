@@ -1,4 +1,4 @@
-package br.edu.ufabc.ufabcrunner_ws.models;
+package br.edu.ufabc.ufabc_runner_ws.models;
 
 import org.springframework.data.annotation.Id;
 
