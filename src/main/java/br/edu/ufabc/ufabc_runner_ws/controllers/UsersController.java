@@ -3,10 +3,7 @@ package br.edu.ufabc.ufabc_runner_ws.controllers;
 import br.edu.ufabc.ufabc_runner_ws.data.UsersRepository;
 import br.edu.ufabc.ufabc_runner_ws.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -19,15 +16,45 @@ public class UsersController {
         this.usersRepository = usersRepository;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public User getUser(@PathVariable(value = "id") String id) {
-        return usersRepository.findById(id);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/user/{id}/score")
-    public long getUserScore(@PathVariable(value = "id") String id) {
+    /**
+     * Updates the score of a user previously in the database
+     *
+     * @param id    the Facebook ID of the user
+     * @param score the score that will *added* to the current
+     * @return the new score (long)
+     */
+    @RequestMapping(method = RequestMethod.PUT, value = "/{facebookId}")
+    public long updateScore(@PathVariable(value = "facebookId") String id, @RequestParam(value = "score") long score) {
+        long currentScore = getUserScore(id);
+        User user = usersRepository.findById(id);
+        user.setScore(currentScore + score);
+        usersRepository.save(user);
         return usersRepository.findById(id).getScore();
     }
 
+    /**
+     * Gets the score of a user previously in the database
+     *
+     * @param id the Facebook ID of the user
+     * @return the user's current score
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/{facebookId}")
+    public long getUserScore(@PathVariable(value = "facebookId") String id) {
+        return usersRepository.findById(id).getScore();
+    }
 
+    /**
+     * Inserts a user
+     *
+     * @param id the Facebook ID of the new user (String)
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/")
+    public void insertUser(@RequestParam(value = "facebookId") String id) {
+        usersRepository.insert(new User(id));
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/")
+    public void deleteUser(@RequestParam(value = "facebookId") String id) {
+        usersRepository.delete(id);
+    }
 }
